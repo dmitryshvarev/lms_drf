@@ -1,12 +1,16 @@
 [project]
 name = "lms-drf"
 version = "0.1.0"
-description = ""
+description = "Learning Management System"
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Dmitry Shvarev",email = "dima.dreadman@gmail.com"}
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "django (>=6.1.3,<7.0.0)",
+    "djangorestframework (>=3.18.3,<4.0.0)",
+    "python-dotenv (>=1.2.4,<2.0.0)",
+    "psycopg2-binary (>=2.9.13,<3.0.0)"
 ]
 
 
