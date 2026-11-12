@@ -8,6 +8,9 @@ class Command(BaseCommand):
     help = 'Заполняет таблицу Payment тестовыми данными'
 
     def handle(self, *args, **options):
+        # Удаляем старые записи
+        Payment.objects.all().delete()
+
         # Получаем или выбираем тестовые объекты для связей
         user = User.objects.first()
         course = Course.objects.first()

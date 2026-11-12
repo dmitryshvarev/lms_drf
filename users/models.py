@@ -60,7 +60,7 @@ class Payment(models.Model):
         blank=True,
         null=True,
     )
-    date = models.DateField(
+    date = models.DateTimeField(
         verbose_name="Дата оплаты",
         auto_now_add=True,
     )
@@ -95,8 +95,10 @@ class Payment(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user} - {self.amount} ({self.get_payment_method_display()})"
+        item = self.course if self.course else self.lesson
+        return f'{self.user} — {item} ({self.amount})'
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
+        ordering = ['-date']
