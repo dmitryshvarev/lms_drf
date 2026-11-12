@@ -1,11 +1,15 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from users.apps import UsersConfig
 from users.views import (UserCreateAPIView, UserDestroyAPIView,
                          UserListAPIView, UserRetrieveAPIView,
-                         UserUpdateAPIView)
+                         UserUpdateAPIView, PaymentViewSet)
 
 app_name = UsersConfig.name
+
+router = DefaultRouter()
+router.register(r"payments", PaymentViewSet, basename="payments")
 
 urlpatterns = [
     path("users/", UserListAPIView.as_view(), name="users_list"),
@@ -14,3 +18,5 @@ urlpatterns = [
     path("users/<int:pk>/delete/", UserDestroyAPIView.as_view(), name="user_delete"),
     path("users/<int:pk>/update/", UserUpdateAPIView.as_view(), name="user_edit"),
 ]
+
+urlpatterns += router.urls
