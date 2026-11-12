@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand
 
-from users.models import User, Payment
 from materials.models import Course, Lesson
+from users.models import Payment, User
 
 
 class Command(BaseCommand):
-    help = 'Заполняет таблицу Payment тестовыми данными'
+    help = "Заполняет таблицу Payment тестовыми данными"
 
     def handle(self, *args, **options):
         # Удаляем старые записи
@@ -17,24 +17,26 @@ class Command(BaseCommand):
         lesson = Lesson.objects.first()
 
         if not user:
-            self.stdout.write(self.style.ERROR('В базе нет ни одного пользователя! Создайте юзера.'))
+            self.stdout.write(
+                self.style.ERROR("В базе нет ни одного пользователя! Создайте юзера.")
+            )
             return
 
         # Создаем записи
         payments_data = [
             {
-                'user': user,
-                'course': course,
-                'lesson': None,
-                'amount': 2500.00,
-                'payment_method': Payment.TRANSFER,
+                "user": user,
+                "course": course,
+                "lesson": None,
+                "amount": 2500.00,
+                "payment_method": Payment.TRANSFER,
             },
             {
-                'user': user,
-                'course': None,
-                'lesson': lesson,
-                'amount': 500.00,
-                'payment_method': Payment.CASH,
+                "user": user,
+                "course": None,
+                "lesson": lesson,
+                "amount": 500.00,
+                "payment_method": Payment.CASH,
             },
         ]
 
@@ -43,4 +45,6 @@ class Command(BaseCommand):
             Payment.objects.create(**item)
             created_count += 1
 
-        self.stdout.write(self.style.SUCCESS(f'Успешно добавлено платежей: {created_count}'))
+        self.stdout.write(
+            self.style.SUCCESS(f"Успешно добавлено платежей: {created_count}")
+        )

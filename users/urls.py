@@ -2,9 +2,9 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from users.apps import UsersConfig
-from users.views import (UserCreateAPIView, UserDestroyAPIView,
+from users.views import (PaymentViewSet, UserCreateAPIView, UserDestroyAPIView,
                          UserListAPIView, UserRetrieveAPIView,
-                         UserUpdateAPIView, PaymentViewSet)
+                         UserUpdateAPIView)
 
 app_name = UsersConfig.name
 

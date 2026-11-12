@@ -96,9 +96,9 @@ class Payment(models.Model):
 
     def __str__(self):
         item = self.course if self.course else self.lesson
-        return f'{self.user} — {item} ({self.amount})'
+        return f"{self.user} — {item} ({self.amount})"
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
-        ordering = ['-date']
+        ordering = ["-date"]
