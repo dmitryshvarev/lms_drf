@@ -30,7 +30,17 @@ class PaymentSerializer(serializers.ModelSerializer):
         return data
 
 
-class UserSerializer(serializers.ModelSerializer):
+class PublicUserSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра чужого профиля (только общая информация)."""
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "phone", "city", "avatar")
+
+
+class PrivateUserSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра и редактирования своего профиля."""
+
     payments = PaymentSerializer(many=True, read_only=True)
     password = serializers.CharField(
         write_only=True,
@@ -43,3 +53,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(is_active=True, **validated_data)
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
