@@ -10,6 +10,7 @@ from users.serializers import PaymentSerializer, UserSerializer
 
 
 class UserCreateAPIView(CreateAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
