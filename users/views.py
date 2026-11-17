@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from users.models import Payment, User
 
+from .paginators import UserPaginator
 from .permissions import IsOwnerOrReadOnly
 from .serializers import (PaymentSerializer, PrivateUserSerializer,
                           PublicUserSerializer)
@@ -38,6 +39,7 @@ class UserListAPIView(ListAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = PublicUserSerializer
+    pagination_class = UserPaginator
 
 
 class UserCreateAPIView(CreateAPIView):
