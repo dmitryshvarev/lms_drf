@@ -97,7 +97,9 @@ class CourseTestCase(BaseAPITestCase):
         # Оформляем подписку и проверяем изменение is_subscribed
         Subscription.objects.create(user=self.other_user, course=self.course)
         response_subscribed = self.client.get(self.list_url)
-        results_subscribed = response_subscribed.data.get("results", response_subscribed.data)
+        results_subscribed = response_subscribed.data.get(
+            "results", response_subscribed.data
+        )
         self.assertTrue(results_subscribed[0]["is_subscribed"])
 
     def test_course_retrieve_permissions(self):
@@ -109,10 +111,14 @@ class CourseTestCase(BaseAPITestCase):
         self.assertEqual(len(response.data["lessons"]), 1)
 
         self.client.force_authenticate(user=self.moder)
-        self.assertEqual(self.client.get(self.detail_url).status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            self.client.get(self.detail_url).status_code, status.HTTP_200_OK
+        )
 
         self.client.force_authenticate(user=self.other_user)
-        self.assertEqual(self.client.get(self.detail_url).status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            self.client.get(self.detail_url).status_code, status.HTTP_403_FORBIDDEN
+        )
 
     def test_course_update_permissions(self):
         """Обновление курса доступно владельцу и модератору, запрещено чужим."""
@@ -131,13 +137,19 @@ class CourseTestCase(BaseAPITestCase):
     def test_course_delete_permissions(self):
         """Удаление курса доступно только владельцу (~IsModer & IsOwner)."""
         self.client.force_authenticate(user=self.moder)
-        self.assertEqual(self.client.delete(self.detail_url).status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code, status.HTTP_403_FORBIDDEN
+        )
 
         self.client.force_authenticate(user=self.other_user)
-        self.assertEqual(self.client.delete(self.detail_url).status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code, status.HTTP_403_FORBIDDEN
+        )
 
         self.client.force_authenticate(user=self.owner)
-        self.assertEqual(self.client.delete(self.detail_url).status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code, status.HTTP_204_NO_CONTENT
+        )
         self.assertEqual(Course.objects.count(), 0)
 
 
@@ -163,7 +175,10 @@ class LessonTestCase(BaseAPITestCase):
 
         # Модератор получает 403
         self.client.force_authenticate(user=self.moder)
-        self.assertEqual(self.client.post(self.create_url, data).status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            self.client.post(self.create_url, data).status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
 
         # Обычный пользователь создает урок
         self.client.force_authenticate(user=self.owner)
@@ -209,9 +224,13 @@ class LessonTestCase(BaseAPITestCase):
     def test_lesson_retrieve_permissions(self):
         """Просмотр урока доступен владельцу и модератору."""
         self.client.force_authenticate(user=self.other_user)
-        self.assertEqual(self.client.get(self.retrieve_url).status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            self.client.get(self.retrieve_url).status_code, status.HTTP_403_FORBIDDEN
+        )
 
         self.client.force_authenticate(user=self.moder)
-        self.assertEqual(self.client.get(self.retrieve_url).status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            self.client.get(self.retrieve_url).status_code, status.HTTP_200_OK
+        )
 
         self.client.force_authenticate(user=self.owner)
