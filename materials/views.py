@@ -26,10 +26,10 @@ class CourseViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == "create":
             self.permission_classes = (IsAuthenticated, ~IsModer)
-        elif self.action in ["update", "retrieve"]:
+        elif self.action in ["update", "partial_update", "retrieve"]:
             self.permission_classes = (IsAuthenticated, IsModer | IsOwner)
         elif self.action == "destroy":
-            self.permission_classes = (IsAuthenticated, ~IsModer | IsOwner)
+            self.permission_classes = (IsAuthenticated, ~IsModer & IsOwner)
         return super().get_permissions()
 
 
@@ -63,7 +63,7 @@ class LessonUpdateAPIView(UpdateAPIView):
 
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = (IsAuthenticated, ~IsModer | IsOwner)
+    permission_classes = (IsAuthenticated, ~IsModer & IsOwner)
 
 
 class SubscriptionAPIView(APIView):
