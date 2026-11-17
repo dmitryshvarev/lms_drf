@@ -1,35 +1,56 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
-                                     ListAPIView, RetrieveAPIView,
-                                     UpdateAPIView)
+                                     ListAPIView, RetrieveUpdateAPIView)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import Payment, User
-from users.serializers import PaymentSerializer, UserSerializer
+
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (PaymentSerializer, PrivateUserSerializer,
+                          PublicUserSerializer)
 
 
-class UserCreateAPIView(CreateAPIView):
-    serializer_class = UserSerializer
+class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    """
+    Представление для просмотра любого профиля (GET)
+    и редактирования только своего (PUT, PATCH).
+    """
+
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        if getattr(self, "swagger_fake_view", False):
+            return PrivateUserSerializer
+
+        user_id = self.kwargs.get("pk")
+        if str(self.request.user.id) == str(user_id):
+            return PrivateUserSerializer
+
+        return PublicUserSerializer
 
 
 class UserListAPIView(ListAPIView):
+    """Список всех пользователей только с публичной информацией."""
+
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = PublicUserSerializer
 
 
-class UserRetrieveAPIView(RetrieveAPIView):
+class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserUpdateAPIView(UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = PrivateUserSerializer
+    permission_classes = (AllowAny,)
 
 
 class UserDestroyAPIView(DestroyAPIView):
+    """Удаление профиля. Доступно только владельцу аккаунта."""
+
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
 class PaymentViewSet(ModelViewSet):
