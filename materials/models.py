@@ -22,6 +22,10 @@ class Course(models.Model):
         blank=True,
         null=True,
     )
+    price = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Цена",
+    )
 
     class Meta:
         verbose_name = "Курс"
@@ -66,6 +70,10 @@ class Lesson(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
+    )
+    price = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Цена",
     )
 
     class Meta:
