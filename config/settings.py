@@ -125,10 +125,8 @@ SIMPLE_JWT = {
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     }
 }
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
