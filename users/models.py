@@ -101,16 +101,31 @@ class Payment(models.Model):
         blank=True,
         null=True,
     )
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    amount = models.PositiveIntegerField(
         verbose_name="Сумма оплаты",
+        blank=True,
+        null=True,
     )
     payment_method = models.CharField(
         max_length=20,
         choices=PAYMENT_METHOD_CHOICES,
         default=TRANSFER,
         verbose_name="Способ оплаты",
+    )
+    session_id = models.CharField(
+        max_length=255,
+        verbose_name="ID сессии Stripe",
+        blank=True,
+        null=True,
+    )
+    payment_link = models.URLField(
+        max_length=1000,
+        verbose_name="Ссылка на оплату",
+        blank=True,
+        null=True,
+    )
+    status = models.CharField(
+        max_length=50, default="unpaid", verbose_name="Статус платежа"
     )
 
     def __str__(self):
