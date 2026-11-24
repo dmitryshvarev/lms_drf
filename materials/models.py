@@ -26,6 +26,7 @@ class Course(models.Model):
         default=0,
         verbose_name="Цена",
     )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         verbose_name = "Курс"
