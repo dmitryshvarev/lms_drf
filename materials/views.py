@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
@@ -10,6 +13,7 @@ from rest_framework.viewsets import ModelViewSet
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import CoursePaginator, LessonPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.tasks import send_course_update_email
 from users.permissions import IsModer, IsOwner
 
 
@@ -22,6 +26,11 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        # Запускаем асинхронную задачу на отправку писем
+        send_course_update_email.delay(course.id)
 
     def get_permissions(self):
         if self.action == "create":
@@ -59,6 +68,20 @@ class LessonUpdateAPIView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
+
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+        course = lesson.course
+
+        # Проверяем, прошло ли более 4 часов с последнего обновления курса
+        if course and course.updated_at:
+            time_since_update = timezone.now() - course.updated_at
+            if time_since_update > timedelta(hours=4):
+                send_course_update_email.delay(course.id)
+
+        # Обновляем время изменения самого курса
+        if course:
+            course.save()
 
 
 class LessonDestroyAPIView(DestroyAPIView):

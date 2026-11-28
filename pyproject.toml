@@ -5,9 +5,9 @@ description = "Learning Management System"
 authors = [
     {name = "Dmitry Shvarev",email = "dima.dreadman@gmail.com"}
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.12,<4.0"
 dependencies = [
-    "django (>=6.1.3,<7.0.0)",
+    "django (>=6.0,<6.1)",
     "djangorestframework (>=3.18.3,<4.0.0)",
     "python-dotenv (>=1.2.4,<2.0.0)",
     "psycopg2-binary (>=2.9.13,<3.0.0)",
@@ -16,6 +16,10 @@ dependencies = [
     "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
     "drf-yasg (>=1.21.18,<2.0.0)",
     "stripe (>=17.1.0,<18.0.0)",
+    "celery (>=5.7.0,<6.0.0)",
+    "redis (>=8.2.0,<9.0.0)",
+    "django-celery-beat (>=2.9.0,<3.0.0)",
+    "eventlet (>=0.41.3,<0.42.0)",
 ]
 
 
